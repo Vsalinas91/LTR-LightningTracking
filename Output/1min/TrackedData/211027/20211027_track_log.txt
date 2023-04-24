@@ -1,0 +1,1 @@
+{"gauss_smooth": 15, "constant_feature": true, "ellipse_height": 125, "ellipse_width": 500, "offset_centroid": 0, "smooth_tracking": true, "compress_ellipse": true, "compress_inwards_by": 100, "num_samples": 10, "xoffset": 0, "yoffset": -150, "adjust": null, "xoffset_end": 20, "yoffset_end": 100}

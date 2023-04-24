@@ -1,0 +1,16 @@
+{
+"Case"        :"20210612",
+ "network"     :"OKLMA",
+ "network_lon" :-97.8176,
+ "network_lat" :35.2706,
+ "lat_range"   :(32,    38),
+ "lon_range"   :(-102, -94),
+ "spacing"     :0.05,
+ "dt"          :600,
+ "start_time"  :"050000",
+ "end_time"    :"100000",
+ "grid_extent" :300000,
+ "grid_spacing":8000,
+ "xover"       :False,
+ "Description" :"User defined keyword arguments for setting up both GLM and LMA gridding. Note, juse json to open file and read in dictionary contents."
+ }

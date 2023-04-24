@@ -1,0 +1,37 @@
+#Ignore backup notebooks
+ForTesting/
+
+#Ignore testing scripts
+backendCopy1.py
+
+#Ignore glm parallax correction file (for now)
+GLMParallaxCorrection.py
+
+#Ignore case parameter files for non-OKLMA cases used in paper
+CaseParams/5min/FlashGriddingParams_2022*.txt
+CaseParams/5min/FlashGriddingParams_2023*.txt
+
+#Ignore all non OKLMA case outputs and unused folder(s)
+Output/1min/GridFrames/
+Output/5min/GridFrames/
+Output/10min/GridFrames/
+
+Output/5min/Overview/22*/
+Output/5min/Overview/23*/
+
+Output/5min/TrackedData/22*/
+Output/5min/TrackedData/23*/
+
+Output/5min/TrackedFrames/22*/
+Output/5min/TrackedFrames/23*/
+
+#Ignore flash sorted and 3d gridded files to save space
+#also ignore test scripts and GLM data.
+LightningData/DataPull.py
+LightningData/GLM/
+LightningData/LMA/sorted/linked/
+LightningData/LMA/sorted/sorted_files/
+LightningData/LMA/gridded/5min/OKLMA_GRIDS_210612_5min_3d.nc
+LightningData/LMA/gridded/5min/OKLMA_GRIDS_22*.nc
+LightningData/LMA/gridded/5min/OKLMA_GRIDS_23*.nc
+
