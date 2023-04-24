@@ -33,7 +33,7 @@ Workflow:
 -------------------------------------
 The LTR follows a linear workflow. This workflow ensures that any user may ingest data from any LMA network for tracking linear storm systems. The workflow is as follows:
 
-![illustration](PaperFigures/METHOD-OK210612.pdf)
+![illustration](PaperFigures/METHOD-OK210612.png)
 
                 1) Download LMA L2 data: LMA data may be requested and pulled from the NSSL Thredds server
 
