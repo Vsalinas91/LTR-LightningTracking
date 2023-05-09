@@ -1,3 +1,23 @@
+#ignore gitignore
+.gitignore
+
+#notebook checkpoints
+.ipynb_checkpoints/
+.ipynb_checkpoints/*.ipynb
+
+#Pycache
+__pycache__/
+.DS_Store
+Output/.DS_Store
+LightningData/.DS_Store
+PaperFigures/.DS_Store
+CaseParams/.DS_Store
+
+#Unused figures
+PaperFigures/NotUsed/
+Output/5min/TrackedFrames/210612/OK0621.gif
+Output/5min/TrackedFrames/211027/OK1021.gif
+
 #Ignore backup notebooks
 ForTesting/
 
@@ -10,6 +30,11 @@ GLMParallaxCorrection.py
 #Ignore case parameter files for non-OKLMA cases used in paper
 CaseParams/5min/FlashGriddingParams_2022*.txt
 CaseParams/5min/FlashGriddingParams_2023*.txt
+
+#Ignore non-rotated grid data:
+Output/10min/TrackedData/210612/210612_sample_grid_dx10_NoRotate.nc
+Output/1min/TrackedData/210612/210612_sample_grid_dx10_NoRotate.nc
+Output/5min/TrackedData/210612/210612_sample_grid_dx10_NoRotate.nc
 
 #Ignore all non OKLMA case outputs and unused folder(s)
 Output/1min/GridFrames/
@@ -34,4 +59,6 @@ LightningData/LMA/sorted/sorted_files/
 LightningData/LMA/gridded/5min/OKLMA_GRIDS_210612_5min_3d.nc
 LightningData/LMA/gridded/5min/OKLMA_GRIDS_22*.nc
 LightningData/LMA/gridded/5min/OKLMA_GRIDS_23*.nc
-
+LightningData/LMA/gridded/5min/*.nc
+LightningData/LMA/gridded/1min/*.nc
+LightningData/LMA/gridded/10min/*.nc

@@ -364,7 +364,7 @@ def fed_interp(tframes,field,glons,glats,galts,sampling,sindx,eindx,geo,proj,met
 #METHODOLOGY PLOTS
 #-----------------
 def ltr_method(half,lon,lat,fed_1min,fed_5min,fed_10min,e1_xcoord,e1_ycoord,e5_xcoord,e5_ycoord,e10_xcoord,e10_ycoord,
-               g1_xcoords,g1_ycoords,g5_xcoords,g5_ycoords,g10_xcoords,g10_ycoords,save=False):
+               g1_xcoords,g1_ycoords,g5_xcoords,g5_ycoords,g10_xcoords,g10_ycoords,g5_xrot,g5_yrot,g1_xrot,g1_yrot,g10_xrot,g10_yrot,save=False):
     '''
     This function generates the LTR methodology figure which illustrates:
     
@@ -379,9 +379,9 @@ def ltr_method(half,lon,lat,fed_1min,fed_5min,fed_10min,e1_xcoord,e1_ycoord,e5_x
     
     #Set constants and parameters for plotting:
     #-----------------------------------------
-    idx_1min =100        #time frame index for 1 minute interval FED
-    idx_5min =20         #time frame index for 5 minute interval FED
-    idx_10min=10         #time frame index for 10 minute interval FED
+    idx_1min =110        #time frame index for 1 minute interval FED
+    idx_5min =22         #time frame index for 5 minute interval FED
+    idx_10min=11         #time frame index for 10 minute interval FED
     cmap = cm.cm.thermal #set color map
     alpha = .8           #figure transparancy
     
@@ -463,10 +463,16 @@ def ltr_method(half,lon,lat,fed_1min,fed_5min,fed_10min,e1_xcoord,e1_ycoord,e5_x
     ax[3,2].pcolormesh(lon,lat,np.log10(np.nan_to_num(fed_10min[idx_10min],0)) ,alpha=alpha,cmap=cmap,transform=ccrs.PlateCarree())
     
     #Now, plot the sample grid x and y coordinates (lon, lat since in geographic system here).
-    ax[3,0].scatter(g1_xcoords[:,idx_1min,:],g1_ycoords[:,idx_1min,:],    marker='+',s=2,color='k',alpha=0.6,linewidth=0.5,transform=ccrs.PlateCarree())
-    ax[3,1].scatter(g5_xcoords[:,idx_5min,:],g5_ycoords[:,idx_5min,:],    marker='+',s=2,color='k',alpha=0.6,linewidth=0.5,transform=ccrs.PlateCarree())
-    ax[3,2].scatter(g10_xcoords[:,idx_10min,:],g10_ycoords[:,idx_10min,:],marker='+',s=2,color='k',alpha=0.6,linewidth=0.5,transform=ccrs.PlateCarree())
+    ax[3,0].plot(g1_xcoords[:,idx_1min,:],g1_ycoords[:,idx_1min,:],color='k',alpha=0.8,linewidth=2,transform=ccrs.PlateCarree())
+    ax[3,1].plot(g5_xcoords[:,idx_5min,:],g5_ycoords[:,idx_5min,:],color='k',alpha=0.8,linewidth=2,transform=ccrs.PlateCarree())
+    ax[3,2].plot(g10_xcoords[:,idx_10min,:],g10_ycoords[:,idx_10min,:],color='k',alpha=0.8,linewidth=2,transform=ccrs.PlateCarree())
+
     
+    #Plot the non-rotated coordinates
+    ax[3,0].plot(g1_xrot[:,idx_1min,:],g1_yrot[:,idx_1min,:],color='C3',linestyle='--',linewidth=1,alpha=0.8,transform=ccrs.PlateCarree())
+    ax[3,1].plot(g5_xrot[:,idx_5min,:],g5_yrot[:,idx_5min,:],color='C3',linestyle='--',linewidth=1,alpha=0.8,transform=ccrs.PlateCarree())
+    ax[3,2].plot(g10_xrot[:,idx_10min,:],g10_yrot[:,idx_10min,:],color='C3',linestyle='--',linewidth=1,alpha=0.8,transform=ccrs.PlateCarree())
+
     #Replot the center points that define the sample axis
     ax[3,0].scatter(g1_xcoords[half,idx_1min,:]  ,g1_ycoords[half,idx_1min,:]  ,marker='s',color='C3',edgecolor='k',linewidth=1,transform=ccrs.PlateCarree())
     ax[3,1].scatter(g5_xcoords[half,idx_5min,:]  ,g5_ycoords[half,idx_5min,:]  ,marker='s',color='C3',edgecolor='k',linewidth=1,transform=ccrs.PlateCarree())

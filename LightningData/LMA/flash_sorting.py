@@ -22,7 +22,7 @@ class LMAGrabber(object):
         self.sort_params=sort_params
 
     def trim_valid(self):
-        #only get files with events else pandas throws an error because some inconsiderate person decided to make selfish changes in its api
+        #only get files with events else pandas throws an error
         self.get_good = []
         for f in self.valid_files:
             with gzip.open(f) as valid_file:
@@ -113,7 +113,7 @@ class LMAGrabber(object):
 if __name__ == '__main__':
     #Read in gridding parameters--shared across GLM and LMA gridding/processing routines
     '''CHANGE THE PATH !!!'''
-    target      ='/Users/admin/Desktop/PERiLS_Analysis/FlashGriddingParams_20230324.txt'
+    target      ='/Users/admin/Desktop/PERiLS_Analysis/FlashGriddingParams_20230405.txt'
     params      = eval(open(target, 'r').read())
     case        = params['Case']
     network     = params['network']
@@ -146,7 +146,12 @@ if __name__ == '__main__':
     else:
         shift_day = 0
     base_date = dt.datetime(int(year),int(month),int(day),shh,smm,sss) #starting period
-    end_time  = dt.datetime(int(year),int(month),int(day)+shift_day,ehh,emm,ess) #ending period--can be day +1 if day crossover exists
+    try:
+        end_time  = dt.datetime(int(year),int(month),int(day)+shift_day,ehh,emm,ess) #ending period--can be day +1 if day crossover exists
+    except:
+        #Start new month if day cross-over starts on last day of month:
+        end_time  = dt.datetime(int(year),int(month)+shift_day,shift_day,ehh,emm,ess) #ending period--can be day +1 if day crossover exists
+
     print('Selected times for analysis period begin at {0} and end at {1} hours'.format(base_date,end_time))
     case_duration = ((end_time-base_date).total_seconds()/60) / 60
     print('Duration of analysis period {0} hours'.format(case_duration))

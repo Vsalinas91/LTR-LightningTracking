@@ -103,8 +103,13 @@ def grid_setup(lon_ranges,lat_ranges,alt_ranges,spacing,case,start,end,grid_dt,x
         shift_day = 0
     f_itime = np.datetime64(dt.datetime(int(case[:4]),int(case[4:6]),int(case[6:]),
                                         int(start[:2]),int(start[2:4]),int(start[4:])))
-    f_ftime = np.datetime64(dt.datetime(int(case[:4]),int(case[4:6]),int(case[6:])+shift_day,
-                                        int(end[:2]),int(end[2:4]),int(end[4:])))
+    try:
+        f_ftime = np.datetime64(dt.datetime(int(case[:4]),int(case[4:6]),int(case[6:])+shift_day,
+                                            int(end[:2]),int(end[2:4]),int(end[4:])))
+    except:
+        print('Crossing month boundary, adjusting final time frame.')
+        f_ftime = np.datetime64(dt.datetime(int(case[:4]),int(case[4:6])+1,1,
+                                            int(end[:2]),int(end[2:4]),int(end[4:])))
     time_range = (f_itime, f_ftime+grid_dt, grid_dt)
     print('Number of time frames to grid: {0}'.format(np.arange(f_itime,f_ftime+grid_dt,grid_dt).shape))
 
@@ -139,7 +144,7 @@ def grid_setup(lon_ranges,lat_ranges,alt_ranges,spacing,case,start,end,grid_dt,x
 if __name__ == '__main__':
     desired_dt  = '5min' # other options are 5min and 10min
     #Read in gridding parameters--shared across GLM and LMA gridding routines
-    target      =f'../../CaseParams/{desired_dt}/FlashGriddingParams_20230303.txt'
+    target      =f'../../CaseParams/{desired_dt}/FlashGriddingParams_20230405.txt'
     params      = eval(open(target, 'r').read())
     case        = params['Case']
     network     = params['network']

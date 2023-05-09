@@ -17,7 +17,7 @@
 #
 #Author: Vicente Salinas
 #Contact: vicente.salinas@noaa.gov
-#Updated: 04/18/23
+#Updated: 04/25/23
 ############################################################################################
 #--------
 #Imports
@@ -29,6 +29,9 @@ import pandas as pd
 import datetime as dt
 from scipy.ndimage import gaussian_filter as gf
 from scipy.stats import linregress as lr
+import backend as bk
+from matplotlib import path
+import gzip
 
 
 #################################################################
@@ -133,6 +136,47 @@ def case_durations_centroids(case,ellipse,istart,istop):
     return(cx,cy,dur)
 
 
+def get_traces(case,ellipse,xm,ym,start,end):
+    '''
+    This function reads in both the ellipse vertex data and their respective FED grids. The purpose of this function is to 
+    generate an ellipse grid by which to illustrate the overall areal coverage of the tracked ellipses relative to the FED 
+    footprint through the analysis duration.
+    
+    Note: must either gunzip the FED data files, or generate new ones. Data for all other cases are not made available in 
+    the repository, but can be made available if desired. Figure generation is simply for illustration and running
+    this function in the notebook will result in an error.
+    '''
+    set_case    = case #YYYYMMDD
+    target      = f'CaseParams/5min/FlashGriddingParams_{set_case}.txt'
+    params      = eval(open(target, 'r').read())
+    network     = params['network']
+    network_lon = params['network_lon']
+    network_lat = params['network_lat']
+    geo,proj,(nlon,nlat) = bk.LMA_projection(network,network_lat,network_lon)
+
+    img = []
+    for i in range(ellipse.ellipse_x.shape[0])[start:end]:
+        poly = path.Path(np.vstack((ellipse.ellipse_x[i,:].values,
+                                    ellipse.ellipse_y[i,:].values)).T)
+        mask = poly.contains_points(np.vstack((xm.flatten(),ym.flatten())).T).reshape(xm.shape)
+        image= np.zeros_like(xm)
+        image[mask] = 1
+
+        img.append(image)
+    img = np.array(img)
+    dat = xr.open_dataset(f'LightningData/LMA/gridded/5min/OKLMA_GRIDS_{case[2:]}_5min.nc',engine='netcdf4')
+    fed = dat.flash_extent_density.values[:]
+    fedx= dat.grid_longitude.values
+    fedy= dat.grid_latitude.values
+    xms,yms = np.meshgrid(fedx,fedy)
+
+    xg,yg,_  = proj.fromECEF(*geo.toECEF(xms.flatten(),yms.flatten(),xms.flatten()*0))
+    xg = xg.reshape(xms.shape)
+    yg = yg.reshape(yms.shape)
+    
+    return(img,fed,xg,yg)
+
+
 #################################################################
 #Statistics and Regression Analyses                             #
 #################################################################
@@ -168,7 +212,7 @@ def reg_eq(cx,cy):
 #------------------------------
 def rmse(x,y,xp,yp):
     '''
-    Calculate the root mean square error between smoothed and linear tracked centroids (Laksmnanan and Smith, 2010).
+    Calculate the root mean square error between smoothed and linear tracked centroids (Lakshmanan and Smith, 2010).
     Returns:
         rms = or rmse of the two tracks.
     '''
@@ -455,7 +499,7 @@ def ltr_eval(cases,all_dur,all_rmse,all_rmse_tri,all_std,all_diffs,save):
         -) all_std      = all FOB area standard deviations
         -) all_diffs    = all centroid position differences
     '''
-    fig,ax = plt.subplots(3,2,figsize=(6,7))
+    fig,ax = plt.subplots(3,2,figsize=(8,9))
     ax[0,0].bar(x=np.arange(len(all_dur)),height=all_dur.T/60/60,#yerr=(all_dur.T/60/60) - np.nanmean(all_dur.T/60/60),
               color=plt.cm.gray(np.linspace(0.5,1,len(all_dur))),edgecolor='k',alpha=0.7,hatch='\\')
     ax[0,0].set_xticks(np.arange(0,len(all_dur)))
