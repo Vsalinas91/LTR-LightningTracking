@@ -1,12 +1,9 @@
-#ignore gitignore
-.gitignore
-
 #notebook checkpoints
-.ipynb_checkpoints/
+.ipynb_checkpoints
 .ipynb_checkpoints/*.ipynb
 
 #Pycache
-__pycache__/
+__pycache__
 .DS_Store
 Output/.DS_Store
 LightningData/.DS_Store
