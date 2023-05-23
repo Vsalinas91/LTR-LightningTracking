@@ -705,8 +705,7 @@ def samples_3d(tx,ty,samps1,samps,index=35,save=False):
 #----------------------------------------------
 #INTERPOLATED SPACE-TIME FIGURES
 #----------------------------------------------
-
-def space_time(samps1,flash_field,samps2,flash_field2,xm,ym,xm2,ym2,data1,data2,which_point,save=False):
+def space_time(samps1,flash_field,samps2,flash_field2,xm,ym,xm2,ym2,data1,data2,which_point,space_time_fig,save=False):
     '''
     This function generates 3 different figure panels per case. These panels are as follow:
     
@@ -726,7 +725,17 @@ def space_time(samps1,flash_field,samps2,flash_field2,xm,ym,xm2,ym2,data1,data2,
         -) data1 & data2 = time frame array for each case
         -) which_point = 50th point of sample grid
     '''
-    fig,ax = plt.subplots(2,3,figsize=(10,6))
+    #Change figure subplot count if space-time reconstruction is plotted.
+    if space_time_fig==True:
+        width  = 10
+        height = 6
+        ncol   = 3
+    else:
+        width  = 7
+        height = 6
+        ncol   = 2
+        
+    fig,ax = plt.subplots(2,ncol,figsize=(width,height))
     #OK-0621
     #Consolidated Plots
     ax[0,0].pcolormesh(np.arange(100),np.arange(10),
@@ -734,9 +743,6 @@ def space_time(samps1,flash_field,samps2,flash_field2,xm,ym,xm2,ym2,data1,data2,
 
     ax[0,1].pcolormesh(data1.frames.values,np.arange(10),
                            np.log10(np.nanmax(samps1[-1],axis=2)).T,vmin=0,vmax=2.5,alpha=0.8,cmap=cm.cm.thermal)
-    #Stitched Mosiac
-    ax[0,2].contour (xm,ym,np.log10(flash_field),levels=20,vmin=0,vmax=2.5,colors='k',linewidths=0.4)
-    ax[0,2].contourf(xm,ym,np.log10(flash_field),levels=20,vmin=0,vmax=2.5,cmap=cm.cm.thermal,alpha=0.8)
 
     #OK-1021
     #Consolidated Plots
@@ -745,16 +751,30 @@ def space_time(samps1,flash_field,samps2,flash_field2,xm,ym,xm2,ym2,data1,data2,
 
     ax[1,1].pcolormesh(data2.frames.values,np.arange(10),
                            np.log10(np.nanmax(samps2[-1],axis=2)).T,vmin=0,vmax=2.5,alpha=0.8,cmap=cm.cm.thermal)
-    #Stitched Mosiac
-    ax[1,2].contour (xm2,ym2,np.log10(flash_field2),levels=20,vmin=0,vmax=2.5,colors='k',linewidths=0.4)
-    ax[1,2].contourf(xm2,ym2,np.log10(flash_field2),levels=20,vmin=0,vmax=2.5,cmap=cm.cm.thermal,alpha=0.8)
+    
+    if space_time_fig==True:
+        #Set whether or not to plot a reconstructed spatial depiction of 
+        #the FEDs sampled at the 50th sample point of the sampling grid
+        #--------------------------------------
+        #Stitched Mosiac OK-0621
+        ax[0,2].contour (xm,ym,np.log10(flash_field),levels=20,vmin=0,vmax=2.5,colors='k',linewidths=0.4)
+        ax[0,2].contourf(xm,ym,np.log10(flash_field),levels=20,vmin=0,vmax=2.5,cmap=cm.cm.thermal,alpha=0.8)
+        
+        #Stitched Mosiac OK-1021
+        ax[1,2].contour (xm2,ym2,np.log10(flash_field2),levels=20,vmin=0,vmax=2.5,colors='k',linewidths=0.4)
+        ax[1,2].contourf(xm2,ym2,np.log10(flash_field2),levels=20,vmin=0,vmax=2.5,cmap=cm.cm.thermal,alpha=0.8)
 
-    ax[0,2].set_xlim(-225,225)
-    ax[0,2].set_ylim(-110,110)
-    ax[1,2].set_xlim(-150,150)
-    ax[1,2].set_ylim(-260,180)
+        ax[0,2].set_xlim(-225,225)
+        ax[0,2].set_ylim(-110,110)
+        ax[1,2].set_xlim(-150,150)
+        ax[1,2].set_ylim(-260,180)
 
-    [axs.grid(alpha=0.5) for axs in ax[:,2]]
+        [axs.grid(alpha=0.5) for axs in ax[:,2]]
+        [axs.set_ylabel('Y-Direction (km)',fontsize=13) for axs in ax[:,-1].flatten()]
+        [axs.set_xlabel('X-Direction (km)',fontsize=13) for axs in ax[:,-1].flatten()]
+        ax[0,2].set_title('Flash Rate at Sample: {0}'.format(which_point),fontsize=14)
+
+        
     [axs.plot([0,100],[i,i],color='k',linestyle='-',linewidth=0.5) for axs in ax[:,0].flatten() for i in range(10)]
     [axs.set_xlim(0,100) for axs in ax[:,0].flatten()]
 
@@ -771,11 +791,15 @@ def space_time(samps1,flash_field,samps2,flash_field2,xm,ym,xm2,ym2,data1,data2,
     [axs.set_ylim(0,10) for axs in ax[:,1].flatten()]
 
     #conditionals used to only provide certain labels to certain panels
-    [axs.set_ylabel('Sample Segment',fontsize=13) for i,axs in enumerate(ax.flatten()) if (i!=2) and (i!=5)]
-    [axs.set_xlabel('Sample Number',fontsize=13) for i,axs in enumerate(ax.flatten()) if (i!=2) and (i!=5) and (i!=1) and (i!=4)]
-    [axs.set_xlabel('Time (s)',fontsize=13) for i,axs in enumerate(ax.flatten()) if (i!=2) and (i!=5) and (i!=0) and (i!=3)]
-    [axs.set_ylabel('Y-Direction (km)',fontsize=13) for axs in ax[:,-1].flatten()]
-    [axs.set_xlabel('X-Direction (km)',fontsize=13) for axs in ax[:,-1].flatten()]
+    if space_time_fig == True:
+        [axs.set_ylabel('Sample Segment',fontsize=13) for i,axs in enumerate(ax.flatten()) if (i!=2) and (i!=5)]
+        [axs.set_xlabel('Sample Number',fontsize=13) for i,axs in enumerate(ax.flatten())  if (i!=2) and (i!=5) and (i!=1) and (i!=4)]
+        [axs.set_xlabel('Time (s)',fontsize=13) for i,axs in enumerate(ax.flatten()) if (i!=2) and (i!=5) and (i!=0) and (i!=3)]
+    else:
+        [axs.set_ylabel('Sample Segment',fontsize=13) for i,axs in enumerate(ax.flatten())]
+        [axs.set_xlabel('Sample Number',fontsize=13) for i,axs in enumerate(ax.flatten())  if (i!=1) and (i!=3)]
+        [axs.set_xlabel('Time (s)',fontsize=13) for i,axs in enumerate(ax.flatten()) if (i!=0) and (i!=2)]
+
 
     #Annotations:
     #------------------------------------------
@@ -786,8 +810,17 @@ def space_time(samps1,flash_field,samps2,flash_field2,xm,ym,xm2,ym2,data1,data2,
     [axs.text(.11,.91,'min=0 max=2.5',color='C3',weight='bold',fontsize=15,transform=axs.transAxes) for axs,letter in zip(ax.flatten(),letters)]
     ax[0,0].set_title('Spatial Maximum Flash Rate',fontsize=14)
     ax[0,1].set_title('Temporal Maximum Flash Rate',fontsize=14)
-    ax[0,2].set_title('Flash Rate at Sample: {0}'.format(which_point),fontsize=14)
-
+    
+    #"Compass" Directions
+    spos,epos = 75,95
+    ax[0,0].annotate("N", xy=(epos, 0.55), xytext=(spos, 0.4),
+                     arrowprops=dict(arrowstyle="<->"))
+    ax[0,0].annotate("S", xytext=(epos, 0.4),xy=(epos,0.4))
+    
+    ax[1,0].annotate("W", xy=(epos, 0.55), xytext=(spos+2, 0.4),
+                     arrowprops=dict(arrowstyle="<->"))
+    ax[1,0].annotate("E", xytext=(epos, 0.4),xy=(epos,0.4))
+    
     ax[0,0].text(-.3,.30,'OK-0621',fontsize=14,weight='bold',color='k',transform=ax[0,0].transAxes,rotation=90)
     ax[1,0].text(-.3,.30,'OK-1021',fontsize=14,weight='bold',color='k',transform=ax[1,0].transAxes,rotation=90)
 
